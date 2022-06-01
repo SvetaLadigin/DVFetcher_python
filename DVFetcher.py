@@ -65,7 +65,17 @@ if __name__ == '__main__':
         if args.r:
             if args.p:
                 package_name = args.p
-                data = parse_recursivly_on_one_package(package_name, version)
+                if version:
+                    parent_package_data = get_requirements.get_package_req(package_name, version)
+                    data = parse_recursivly_on_one_package(package_name, version)
+                elif version is None:
+                    parent_package_data = get_requirements.get_package_req(package_name)
+                    data = parse_recursivly_on_one_package(package_name)
+
+                result_file.write(
+                    "{},{},{},{}\n".format(parent_package_data["name"], parent_package_data["version"],
+                                           parent_package_data["dependencies"],
+                                           parent_package_data["vulnerabilities"]))
                 for d in data:
                     d_json = data[d]
                     print("---data----")
@@ -136,5 +146,4 @@ if __name__ == '__main__':
     #     data = parse_recursivly_on_one_package(package[0],package[1])
     #     f = open("output.txt", "w")
     #     f.writelines(data)
-
 
