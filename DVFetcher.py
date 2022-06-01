@@ -82,9 +82,15 @@ if __name__ == '__main__':
                     if len(p)>1:
                         version = p[1]
                     if version:
+                        parent_package_data = get_requirements.get_package_req(package_name, version)
                         data = parse_recursivly_on_one_package(package_name, version)
                     elif version is None:
+                        parent_package_data = get_requirements.get_package_req(package_name)
                         data = parse_recursivly_on_one_package(package_name)
+
+                    result_file.write(
+                        "{},{},{},{}\n".format(parent_package_data["name"], parent_package_data["version"], parent_package_data["dependencies"],
+                                               parent_package_data["vulnerabilities"]))
                     for d in data:
                         d_json = data[d]
                         result_file.write(
@@ -103,6 +109,8 @@ if __name__ == '__main__':
             list_of_packages = packages.split(",")
             print(list_of_packages)
             data = get_requirements.get_info_for_list_of_packages(list_of_packages)
+            print("data-----------")
+            print(data)
             #print(data)
             for d in data:
                 # print(data[d])
@@ -128,4 +136,5 @@ if __name__ == '__main__':
     #     data = parse_recursivly_on_one_package(package[0],package[1])
     #     f = open("output.txt", "w")
     #     f.writelines(data)
+
 
