@@ -1,9 +1,16 @@
 import requests
 import json
+import pkg_resources
 
+
+def get_packages_locally_installed():
+    working_set = []
+    for p in pkg_resources.working_set:
+        name, version = str(p).split(' ', 1)
+        working_set.append(('{}'.format(name), version))
+    return working_set
 
 def get_package_req(package_name, *version):
-
     # https://pypi.org/pypi/pandas/0.22.0/json
     base_url = "https://pypi.org/pypi/"
     version_toreturn = None
@@ -13,11 +20,14 @@ def get_package_req(package_name, *version):
         package_desc = (package_name,version_toreturn,"json")
     else:
         package_desc = (package_name, "json")
-    # print(package_desc)
+    print(package_desc)
     url_pack = "/".join(package_desc)
+    print(url_pack)
     url = base_url+url_pack
     package_req = requests.get(url)
-    #print(package_req.text)
+    if "Error code 404" in package_req.text:
+        return {"name": package_name,"version":version_toreturn,"dependencies": None, "vulnerabilities": None, "error": 1}
+    # print(package_req.text)
     json_pack = json.loads(package_req.text)
     # print(json_pack)
     print("---------package name-----------")
@@ -31,7 +41,7 @@ def get_package_req(package_name, *version):
     vulnerabilities = json_pack['vulnerabilities']
     print(vulnerabilities)
 
-    return {"name": package_name,"version":version_toreturn,"dependencies":dependencies, "vulnerabilities": vulnerabilities}
+    return {"name": package_name,"version":version_toreturn,"dependencies":dependencies, "vulnerabilities": vulnerabilities, "error": 0}
 
 def send_req_parssed(pack_string):
     tmp_pac = pack_string.split(" ")
@@ -52,5 +62,4 @@ def get_info_for_list_of_packages(packages):
 
         for package in packages:
             return_data[package] = send_req_parssed(package)
-
     return return_data
