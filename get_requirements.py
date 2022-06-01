@@ -7,23 +7,23 @@ def get_package_req(package_name, *version):
     # https://pypi.org/pypi/pandas/0.22.0/json
     base_url = "https://pypi.org/pypi/"
     version_toreturn = None
-    print(version)
-    if version[0]:
+    # print(version)
+    if version:
         version_toreturn = version[0]
         package_desc = (package_name,version_toreturn,"json")
     else:
         package_desc = (package_name, "json")
-    print(package_desc)
+    # print(package_desc)
     url_pack = "/".join(package_desc)
     url = base_url+url_pack
     package_req = requests.get(url)
     #print(package_req.text)
     json_pack = json.loads(package_req.text)
-    print(json_pack)
+    # print(json_pack)
     print("---------package name-----------")
     print(package_name)
-    if version:
-        print(version_toreturn)
+    # if version:
+        # print(version_toreturn)
     print("---------dependencies-----------")
     dependencies = json_pack['info']['requires_dist']
     print(dependencies)
