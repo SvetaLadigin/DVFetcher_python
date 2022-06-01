@@ -100,13 +100,16 @@ if __name__ == '__main__':
                 "{},{},{},{}\n".format(d["name"], d["version"], d["dependencies"], d["vulnerabilities"]))
         elif args.l:
             packages = args.l
-            packages = packages.replace(" ", "")
             list_of_packages = packages.split(",")
             print(list_of_packages)
             data = get_requirements.get_info_for_list_of_packages(list_of_packages)
+            #print(data)
             for d in data:
+                # print(data[d])
+                # if not data[d]["version"]:
+                #     print("not")
                 result_file.write(
-                    "{},{},{},{}\n".format(d["name"], d["version"], d["dependencies"], d["vulnerabilities"]))
+                    "{},{},{},{}\n".format(data[d]["name"], data[d]["version"], data[d]["dependencies"], data[d]["vulnerabilities"]))
 
     result_file.close()
 
@@ -126,5 +129,3 @@ if __name__ == '__main__':
     #     f = open("output.txt", "w")
     #     f.writelines(data)
 
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
