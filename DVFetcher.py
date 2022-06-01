@@ -31,11 +31,7 @@ def parse_recursivly_on_one_package(package_name, *version):
 
 
 if __name__ == '__main__':
-    # get_requirements.get_package_req("pandas")
-    # list_of_package = ['python-dateutil (>=2.8.1)', 'pytz (>=2020.1)', 'numpy (>=1.18.5) ; platform_machine != "aarch64" and platform_machine != "arm64" and python_version < "3.10"', 'numpy (>=1.19.2) ; platform_machine == "aarch64" and python_version < "3.10"', 'numpy (>=1.20.0) ; platform_machine == "arm64" and python_version < "3.10"', 'numpy (>=1.21.0) ; python_version >= "3.10"', "hypothesis (>=5.5.3) ; extra == 'test'", "pytest (>=6.0) ; extra == 'test'", "pytest-xdist (>=1.31) ; extra == 'test'"]
-    # new_list_list_of_package = parse_packages_from_pypi(list_of_package)
-    # info_list = get_requirements.get_info_for_list_of_packages(new_list_list_of_package)
-    # print(info_list)
+
     parser = argparse.ArgumentParser(description="Simple fetcher for python package's dependencies and their CVE'S for as registered in pypi.org\n"
               "for recursive search use -r\n"
               "for package use -p\n"
@@ -52,11 +48,23 @@ if __name__ == '__main__':
                         help='Recursive search')
     parser.add_argument('-l', type=str, default=None,
                         help='List of packages')
+    parser.add_argument('-local', action='store_true', default=False,
+                        help='Search locally installed packages')
 
     args = parser.parse_args()
 
     result_file = open("results.csv", "w", buffering=1)
 
+    if args.local:
+        list_of_locally_installed_packages = get_requirements.get_packages_locally_installed()
+        for package in list_of_locally_installed_packages:
+            package_name = package[0]
+            package_version = package[1]
+            data = get_requirements.get_package_req(package_name,package_version)
+            result_file.write(
+                "{},{},{},{},{}\n".format(data["name"], data["version"],
+                                       data["dependencies"],
+                                       data["vulnerabilities"], data["error"]))
 
     if args.r:
         version = None
@@ -73,14 +81,14 @@ if __name__ == '__main__':
                     data = parse_recursivly_on_one_package(package_name)
 
                 result_file.write(
-                    "{},{},{},{}\n".format(parent_package_data["name"], parent_package_data["version"],
+                    "{},{},{},{},{}\n".format(parent_package_data["name"], parent_package_data["version"],
                                            parent_package_data["dependencies"],
-                                           parent_package_data["vulnerabilities"]))
+                                           parent_package_data["vulnerabilities"], parent_package_data["error"]))
                 for d in data:
                     d_json = data[d]
                     print("---data----")
                     print(data)
-                    result_file.write("{},{},{},{}\n".format(d_json["name"], d_json["version"],d_json["dependencies"], d_json["vulnerabilities"]))
+                    result_file.write("{},{},{},{},{}\n".format(d_json["name"], d_json["version"],d_json["dependencies"], d_json["vulnerabilities"], d_json["error"]))
             elif args.l:
                 packages = args.l
                 list_of_packages = packages.split(",")
@@ -99,12 +107,12 @@ if __name__ == '__main__':
                         data = parse_recursivly_on_one_package(package_name)
 
                     result_file.write(
-                        "{},{},{},{}\n".format(parent_package_data["name"], parent_package_data["version"], parent_package_data["dependencies"],
-                                               parent_package_data["vulnerabilities"]))
+                        "{},{},{},{},{}\n".format(parent_package_data["name"], parent_package_data["version"], parent_package_data["dependencies"],
+                                               parent_package_data["vulnerabilities"],parent_package_data["error"]))
                     for d in data:
                         d_json = data[d]
                         result_file.write(
-                            "{},{},{},{}\n".format(d_json["name"], d_json["version"], d_json["dependencies"], d_json["vulnerabilities"]))
+                            "{},{},{},{},{}\n".format(d_json["name"], d_json["version"], d_json["dependencies"], d_json["vulnerabilities"],d_json["error"]))
     else:
         version = None
         if args.v:
@@ -113,7 +121,7 @@ if __name__ == '__main__':
             package_name = args.p
             d = get_requirements.get_package_req(package_name, version)
             result_file.write(
-                "{},{},{},{}\n".format(d["name"], d["version"], d["dependencies"], d["vulnerabilities"]))
+                "{},{},{},{},{}\n".format(d["name"], d["version"], d["dependencies"], d["vulnerabilities"], d["error"]))
         elif args.l:
             packages = args.l
             list_of_packages = packages.split(",")
@@ -127,23 +135,6 @@ if __name__ == '__main__':
                 # if not data[d]["version"]:
                 #     print("not")
                 result_file.write(
-                    "{},{},{},{}\n".format(data[d]["name"], data[d]["version"], data[d]["dependencies"], data[d]["vulnerabilities"]))
+                    "{},{},{},{},{}\n".format(data[d]["name"], data[d]["version"], data[d]["dependencies"], data[d]["vulnerabilities"],data[d]["error"]))
 
     result_file.close()
-
-
-
-
-
-
-
-
-    #
-    # recursive = input("Recursive? (y/n)")
-    # if recursive == "y":
-    #     package_name_and_version = input("package name and version [name] [version] :")
-    #     package = package_name_and_version.split(" ")
-    #     data = parse_recursivly_on_one_package(package[0],package[1])
-    #     f = open("output.txt", "w")
-    #     f.writelines(data)
-
