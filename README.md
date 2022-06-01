@@ -15,4 +15,6 @@ col 1: name <br />
 col 2: version <br />
 col 3: dependencies <br />
 col 4: CVE'S <br />
-col 5: error, if there was an error fetching the information from pypi the field value equals to 1 otherwise, 0 <br />
+col 5: error, if there was an error fetching the information from pypi the field value equals to 1 otherwise, 0 <br /><br />
+Note: When running -local in a virual enviroment the script will fetch only the packeges installed in the environment,
+if you wish to see the local packages consider running it locally (for example from /tmp directory)
