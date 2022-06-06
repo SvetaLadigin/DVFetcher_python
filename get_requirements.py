@@ -14,10 +14,12 @@ def get_package_req(package_name, *version):
     # https://pypi.org/pypi/pandas/0.22.0/json
     base_url = "https://pypi.org/pypi/"
     version_toreturn = None
-    # print(version)
     if version:
-        version_toreturn = version[0]
-        package_desc = (package_name,version_toreturn,"json")
+        if version[0]:
+            version_toreturn = version[0]
+            package_desc = (package_name,version_toreturn,"json")
+        else:
+            package_desc = (package_name,"json")
     else:
         package_desc = (package_name, "json")
     print(package_desc)
