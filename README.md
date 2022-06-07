@@ -4,11 +4,13 @@ for locally installed packeges use -local <br />
 for recursive search use -r <br />
 for package use -p <br />
 for version use -v <br />
-for a list of packages use -l <br /><br />
+for a list of packages use -l <br />
+for a requirements.txt file use -f <br /><br />
 examples: <br />
 [+] for locally installed packages: python DVFetcher.py -local <br />
 [+] recursive search on a list : python DVFetcher -r -l="pandas 0.22.0,numpy" <br />
 [+] information about 1 package: python DVFetcher -p="pandas" -v="0.22.0" <br />
+[+] information for requirements file in form of "package~=version" package: python DVFetcher -f=requirements.txt <br />
 <br /><br />
 Output: results.csv <br />
 col 1: name <br />
