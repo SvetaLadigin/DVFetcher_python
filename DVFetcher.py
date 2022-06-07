@@ -2,8 +2,6 @@ import get_requirements
 import sys
 import argparse
 
-
-
 def parse_packages_from_pypi(list_of_packages):
     new_list = []
     chars_to_remove = ">=()<,"
@@ -44,6 +42,8 @@ if __name__ == '__main__':
                         help='Package name')
     parser.add_argument('-v', type=str, default=None,
                         help='Version')
+    parser.add_argument('-f', type=argparse.FileType('r'), default=None,
+                        help='Requirements file, lines in a form of "package~=version"')
     parser.add_argument('-r', action='store_true', default=False,
                         help='Recursive search')
     parser.add_argument('-l', type=str, default=None,
@@ -54,6 +54,16 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     result_file = open("results.csv", "w", buffering=1)
+
+    if args.f:
+        file = args.f.readlines()
+        data = get_requirements.open_req_list(file)
+        for d in data:
+            result_file.write(
+                "{},{},{},{},{}\n".format(d["name"], d["version"],
+                                          d["dependencies"],
+                                          d["vulnerabilities"], d["error"]))
+        # print(get_requirements.open_req_list(file))
 
     if args.local:
         list_of_locally_installed_packages = get_requirements.get_packages_locally_installed()

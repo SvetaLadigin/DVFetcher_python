@@ -65,3 +65,18 @@ def get_info_for_list_of_packages(packages):
         for package in packages:
             return_data[package] = send_req_parssed(package)
     return return_data
+
+
+def open_req_list(file):
+    req_file = file
+    # print(file)
+    lines = file
+    list_of_req = []
+    for line in lines:
+        parssed_line = line.replace("~=", " ")
+        parssed_line1 = parssed_line.rstrip()
+        # print("parssed line")
+        # print(str(parssed_line1))
+        list_of_req.append(send_req_parssed(str(parssed_line1)))
+    # print(list_of_req)
+    return list_of_req
